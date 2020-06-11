@@ -1,3 +1,6 @@
-const setting = {
-    active_lang:
+const initSetting: any = {
+    active_lang:'id',
+    key_bearer: 'no body'
 }
+
+export { initSetting }
