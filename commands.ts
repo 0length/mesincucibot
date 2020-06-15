@@ -43,11 +43,11 @@ const commands: Array<Command> = [
         cmd: 'book',
         desc: 'key_holder',
         action:async (ctx: Context, active_lang: string)=>{
-            if(await db.cekBook(getUsername(ctx)).length<1){
+            if((await db.cekBook(getUsername(ctx))).length<1){
                 await db.setBook(getUsername(ctx))
-                ctx.reply(`added to book list`)
+                ctx.reply(language[(active_lang as string)].command.book.other['added'])
             }else{
-                ctx.reply(`already add to book list`)
+                ctx.reply(language[(active_lang as string)].command.book.other['already'])
             }
         }
     },
@@ -55,38 +55,38 @@ const commands: Array<Command> = [
         cmd: 'cancel',
         desc: 'key_holder',
         action:async (ctx: Context, active_lang: string)=>{
-            if(await db.cekBook(getUsername(ctx)).length<1){
-                ctx.reply(`never booked before`)
+            if((await db.cekBook(getUsername(ctx))).length<1){
+                ctx.reply(language[(active_lang as string)].command.cancle.other['never'])
             }else{
                 await db.delBook(getUsername(ctx))
-                ctx.reply(`removed from book list`)
+                ctx.reply(language[(active_lang as string)].command.cancle.other['removed'])
             }
         }
     },
     {
         cmd: 'be_key_bearer',
         desc: 'update_lang',
-        action: async(ctx: Context)=>{
+        action: async(ctx: Context, active_lang: string)=>{
             await db.setSetting('key_bearer', getUsername(ctx))
-            ctx.reply(getUsername(ctx)+' is the key bearer now')
+            ctx.reply(getUsername(ctx)+language[(active_lang as string)].command.be_key_bearer.other['is'])
         }
     },
     {
         cmd: 'key_bearer',
         desc: 'update_lang',
-        action:async (ctx: Context)=>{
-            ctx.reply((await db.getSetting('key_bearer'))+' is the key bearer now')
+        action:async (ctx: Context, active_lang: string)=>{
+            ctx.reply((await db.getSetting('key_bearer'))+language[(active_lang as string)].command.key_bearer.other['is'])
         }
     },
     {
         cmd: 'checkin',
         desc: 'checkin',
-        action:async (ctx: Context)=>{
+        action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
-                if(!await db.getSetting('using_by').length){
+                if(await db.getSetting('using_by')==='no body'){
                     await ctx.telegram.sendMessage({
                         chatId: ctx.chat.id,
-                        text: '`One step again to Complete. Please Chose the time.`',
+                        text: language[(active_lang as string)].command.checkin.other['on_step_again'],
                         params: {
                             parse_mode: 'Markdown',
                             reply_to_message_id: ctx.message.message_id,
@@ -100,9 +100,15 @@ const commands: Array<Command> = [
                         }
                     })
                 }else{
-                    ctx.reply('Whasing machine is busy, you can /book to use next')
+                    ctx.reply(
+                        `${
+                            language[(active_lang as string)].command.checkin.other['is_used_by']
+                        } ${
+                            await db.getSetting('using_by')
+                        }, ${
+                            language[(active_lang as string)].command.checkin.other['you_can_book']
+                        }`)
                 }
-                
             }
         }
     },
@@ -110,11 +116,11 @@ const commands: Array<Command> = [
         cmd: key.substr(1),
         desc: 'reminder',
         action: async (ctx: Context, active_lang: string)=>{
-            if(await db.cekBook(getUsername(ctx)).length<1){
-                ctx.reply(`never booked before. but its okay`)
+            if((await db.cekBook(getUsername(ctx))).length<1){
+                ctx.reply(language[(active_lang as string)].command.reminder.other['never'])
             }else{
                 await db.delBook(getUsername(ctx))
-                ctx.reply(`moved from book list to using`)
+                ctx.reply(language[(active_lang as string)].command.reminder.other['moved'])
             }
             await db.setSetting('using_by', getUsername(ctx))
             await db.setSetting('start_from', `${language[active_lang].day[new Date().getDay()]} ${new Date().getHours()}.${new Date().getMinutes()} `)
@@ -122,7 +128,7 @@ const commands: Array<Command> = [
                 if (ctx.message !== undefined && ctx.chat !== undefined) {
                     await ctx.telegram.sendMessage({
                         chatId: ctx.chat.id,
-                        text: "`@"+getUsername(ctx)+" 's laundry might be finished.",
+                        text: "@"+getUsername(ctx)+language[(active_lang as string)].command.reminder.other['might_finish'],
                         params: {
                             parse_mode: 'Markdown',
                             reply_to_message_id: ctx.message.message_id,
@@ -142,29 +148,24 @@ const commands: Array<Command> = [
     {
         cmd: 'checkout',
         desc: 'checkout',
-        action:async (ctx: Context)=>{
+        action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
                 await db.setHistory(getUsername(ctx),`( ${await db.getSetting('start_from')}- ${new Date().getHours()}.${new Date().getMinutes()} )`)
                 await db.setSetting('using_by','no body')
                 await db.setSetting('start_from','not started yet')
-                if(await db.getBook().length>0){
-                    ctx.reply(await db.getBook()[0][1]+' can use now')
-                }
+
                 await ctx.telegram.sendMessage({
                     chatId: ctx.chat.id,
-                    text: '`monospace`',
+                    text: language[(active_lang as string)].command.checkout.other['get_rest'],
                     params: {
                         parse_mode: 'Markdown',
                         reply_to_message_id: ctx.message.message_id,
-                        reply_markup: {
-                            keyboard: [[{text:'no reminder'}], ...Object.keys(timeRiminder).map((text: string)=>([{text}]))],
-                            one_time_keyboard: true,
-                            resize_keyboard: true,
-                            remove_keyboard: true,
-                            selective: true
-                        },
                     }
                 })
+                
+                if((await db.getBook()).length>0){
+                    ctx.reply((await db.getBook())[0][1]+language[(active_lang as string)].command.checkout.other['get_rest'])
+                }
             }
         }
     }
