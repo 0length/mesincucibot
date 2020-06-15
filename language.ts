@@ -29,39 +29,40 @@ const language: {[index: string]: Language} = {
             },
             book: {
                 title: 'Pemesanan',
-                desc: '',
+                desc: 'Melakukan pemesanan',
                 other: {
-                    added: 'di tambahkan ke daftar pemesan',
-                    already: 'sudah pernah memesan'
+                    added: '✔️ di tambahkan',
+                    already: 'sudah pernah memesan',
+                    get_rest: 'Mesin cuci sedang meng🍷 anda bisa /checkin sekarang',
                 }
             },
             cancle: {
-                title: '',
-                desc: '',
+                title: 'Batal',
+                desc: 'Membatalkan Pesanan',
                 other: {
                     never: 'belum pernah memesan sebelumnya',
-                    removed: `Sudah di hapus dari daftar pesanan`
+                    removed: `Sudah di ❌ dari daftar pesanan`
                 }
             },
             be_key_bearer: {
-                title: '',
-                desc: '',
+                title: 'Menjadi pembawa 🔑',
+                desc: 'Menjadi pembawa 🔑',
                 other: {
-                    is: ' adalah pembawa kunci',
+                    is: ' adalah pembawa 🔑',
                 }
             },
             key_bearer: {
-                title: '',
-                desc: '',
+                title: 'Melihat pembawa 🔑',
+                desc: 'Melihat pembawa 🔑',
                 other: {
-                    is: ' adalah pembawa kunci',
+                    is: ' adalah pembawa 🔑',
                 }
             },
             checkin: {
                 title: '',
                 desc: '',
                 other: {
-                    on_step_again: '`Satu langkah lagi. Pilih jangka waktu penggunaan`',
+                    on_step_again: 'Satu langkah lagi. Pilih ⏰ penggunaan',
                     is_used_by: 'Mesin cuci sedang di pakai oleh',
                     you_can_book: 'anda bisa /book (memesan) untuk menggunakan selanjutnya dan  /book_list (daftar pesanan ) untuk melihat daftar pesanan.',
                 }
@@ -70,17 +71,21 @@ const language: {[index: string]: Language} = {
                 title: '',
                 desc: '',
                 other: {
-                    never: '`belum pernah booking sebelumnya. tapi ndak papa`',
-                    moved: '`dipindahkan dari daftar pesanan menjadi pemakai`',
-                    might_finish: " memiliki cucian yang mungkin sudah selesai",
+                    never_check: 'belum pernah checkin sebelumnya, tolong /checkin dulu. ',
+                    never: 'belum pernah booking sebelumnya, tapi ndak papa.',
+                    moved: 'dipindahkan dari daftar pesanan menjadi pemakai.',
+                    might_finish: " memiliki 🧺 yang mungkin sudah selesai. 🔔",
+                    checkin: '✔️ checkin.'
                 }
             },
             checkout:{
                 title: '',
                 desc: '',
                 other: {
-                    get_rest: '`Mesin cuci sudah menganggur`',
-                    can_use: ' bisa menggunakan sekarang'
+                    get_rest: ' Mesin cuci sudah meng🍷.',
+                    can_use: ' bisa menggunakan sekarang',
+                    no_use: ' anda memang belum menggunakan',
+                    checkout: '✔️ checkout.'
                 }
             }
         },
@@ -108,7 +113,8 @@ const language: {[index: string]: Language} = {
                 desc: '',
                 other: {
                     added: 'added to book list',
-                    already: 'already add to book list'
+                    already: 'already add to book list',
+                    get_rest: 'Whasing machine is not in use, you can /checkin now.',
                 }
             },
             cancle: {
@@ -149,6 +155,7 @@ const language: {[index: string]: Language} = {
                     never: '`never booked before. but its okay`',
                     moved: '`moved from book list to using`',
                     might_finish: "'s laundry might be finished.",
+                    checkin: 'Success checkin.'
                 }
             },
             checkout:{

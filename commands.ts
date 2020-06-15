@@ -46,6 +46,9 @@ const commands: Array<Command> = [
             if((await db.cekBook(getUsername(ctx))).length<1){
                 await db.setBook(getUsername(ctx))
                 ctx.reply(language[(active_lang as string)].command.book.other['added'])
+                if(await db.getSetting('using_by')!=='no body' && ((await db.getBook())[0].name+'' === getUsername(ctx))){
+                    ctx.reply(language[(active_lang as string)].command.book.other['get_rest'])
+                }
             }else{
                 ctx.reply(language[(active_lang as string)].command.book.other['already'])
             }
@@ -83,7 +86,8 @@ const commands: Array<Command> = [
         desc: 'checkin',
         action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
-                if(await db.getSetting('using_by')==='no body'){
+                if(await db.getSetting('using_by')!=='no body'){
+                    await db.setSetting('wanna_check', getUsername(ctx))
                     await ctx.telegram.sendMessage({
                         chatId: ctx.chat.id,
                         text: language[(active_lang as string)].command.checkin.other['on_step_again'],
@@ -116,6 +120,11 @@ const commands: Array<Command> = [
         cmd: key.substr(1),
         desc: 'reminder',
         action: async (ctx: Context, active_lang: string)=>{
+            
+            if((await db.getSetting('wanna_check'))+''==='no body'){
+                return ctx.reply(language[(active_lang as string)].command.reminder.other['never_check'])
+            }
+            await db.setSetting('wanna_check', 'no body')
             if((await db.cekBook(getUsername(ctx))).length<1){
                 ctx.reply(language[(active_lang as string)].command.reminder.other['never'])
             }else{
@@ -124,11 +133,12 @@ const commands: Array<Command> = [
             }
             await db.setSetting('using_by', getUsername(ctx))
             await db.setSetting('start_from', `${language[active_lang].day[new Date().getDay()]} ${new Date().getHours()}.${new Date().getMinutes()} `)
+            ctx.reply(language[(active_lang as string)].command.reminder.other['checkin'])
             setTimeout(async() => {
                 if (ctx.message !== undefined && ctx.chat !== undefined) {
                     await ctx.telegram.sendMessage({
                         chatId: ctx.chat.id,
-                        text: "@"+getUsername(ctx)+language[(active_lang as string)].command.reminder.other['might_finish'],
+                        text: getUsername(ctx)+language[(active_lang as string)].command.reminder.other['might_finish'],
                         params: {
                             parse_mode: 'Markdown',
                             reply_to_message_id: ctx.message.message_id,
@@ -142,7 +152,7 @@ const commands: Array<Command> = [
                         }
                     })
                 } 
-            }, 3000);
+            }, timeRiminder[key]);
         }
     })),
     {
@@ -150,10 +160,15 @@ const commands: Array<Command> = [
         desc: 'checkout',
         action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
+                if(await db.getSetting('using_by')+''!==getUsername(ctx))
+                {
+                    return ctx.reply(language[(active_lang as string)].command.checkout.other['no_use'])
+                }
+
                 await db.setHistory(getUsername(ctx),`( ${await db.getSetting('start_from')}- ${new Date().getHours()}.${new Date().getMinutes()} )`)
                 await db.setSetting('using_by','no body')
                 await db.setSetting('start_from','not started yet')
-
+                ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
                 await ctx.telegram.sendMessage({
                     chatId: ctx.chat.id,
                     text: language[(active_lang as string)].command.checkout.other['get_rest'],
@@ -164,7 +179,31 @@ const commands: Array<Command> = [
                 })
                 
                 if((await db.getBook()).length>0){
-                    ctx.reply((await db.getBook())[0][1]+language[(active_lang as string)].command.checkout.other['get_rest'])
+                    ctx.reply((await db.getBook())[0].name+language[(active_lang as string)].command.checkout.other['can_use'])
+                }
+            }
+        }
+    },
+    {
+        cmd: 'force_checkout',
+        desc: 'force_checkout',
+        action:async (ctx: Context, active_lang: string)=>{
+            if (ctx.message !== undefined && ctx.chat !== undefined) {
+                await db.setHistory(getUsername(ctx),`( ${await db.getSetting('start_from')}- ${new Date().getHours()}.${new Date().getMinutes()} )`)
+                await db.setSetting('using_by','no body')
+                await db.setSetting('start_from','not started yet')
+                ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
+                await ctx.telegram.sendMessage({
+                    chatId: ctx.chat.id,
+                    text: language[(active_lang as string)].command.checkout.other['get_rest'],
+                    params: {
+                        parse_mode: 'Markdown',
+                        reply_to_message_id: ctx.message.message_id,
+                    }
+                })
+                
+                if((await db.getBook()).length>0){
+                    ctx.reply((await db.getBook())[0].name+language[(active_lang as string)].command.checkout.other['can_use'])
                 }
             }
         }

@@ -18,5 +18,10 @@ commands.forEach((command) => {
     bot.command(command.cmd, async (ctx: Context)=>{ ctx.message && command.action(ctx, active_lang) })
 });
 
+commands.forEach((command) => {
+  bot.command(command.cmd+'@mesincucibot', async (ctx: Context)=>{ ctx.message && command.action(ctx, active_lang) })
+});
+
+
 
 bot.launch()
