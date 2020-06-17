@@ -13,14 +13,23 @@ interface TimeReminder {
 }
 
 const timeRiminder: TimeReminder ={'/30m':1800000, '/1h': 3600000, '/1.5h': 5400000 , '/2h':7200000 , '/2.5h': 9000000 }
+
 const getUsername = (ctx: Context)=>(ctx.message?.from?.username?'@'+ctx.message.from.username:'unknow')
+const no= async (key: string)=>((await db.getSetting(key))+''==='no body')
+const noUsed = ()=>no('using_by')
+const noWannaCheck = ()=>no('wanna_check')
+
+const reset = (key: string)=>db.setSetting(key, 'no body')
+const resetUsed = ()=>reset('using_by')
+const resetWannaCheck = ()=>reset('wanna_check')
+
 const commands: Array<Command> = [
     {
         cmd: 'history',
         desc: 'history',
         action: async (ctx: Context, active_lang: string)=>{
             ctx.reply(`
-            ${language[(active_lang as string)].command.history.title}
+            ${language[(active_lang as string)].command.history.title}: \n
             ${
                 (await db.getHistory()).map(({id, name, time}: any, idx: number)=>((`\r\n\r\n${++idx}. ${name} ${time}`)))
             }
@@ -29,10 +38,10 @@ const commands: Array<Command> = [
     },
     {
         cmd: 'book_list',
-        desc: 'key_holder',
+        desc: 'book_list',
         action:async (ctx: Context, active_lang: string)=>{
             ctx.reply(`
-            ${language[(active_lang as string)].command.book_list.title}
+            ${language[(active_lang as string)].command.book_list.title} : \n
             ${
                 (await db.getBook()).map(({id, name}: any, idx: number)=>((`\r\n\r\n${++idx}. ${name} `)))
             }
@@ -41,12 +50,13 @@ const commands: Array<Command> = [
     },
     {
         cmd: 'book',
-        desc: 'key_holder',
+        desc: 'book',
         action:async (ctx: Context, active_lang: string)=>{
             if((await db.cekBook(getUsername(ctx))).length<1){
+                if((await db.getSetting('using_by')+'')===getUsername(ctx)) return ctx.reply(language[(active_lang as string)].command.book.other['used'])
                 await db.setBook(getUsername(ctx))
                 ctx.reply(language[(active_lang as string)].command.book.other['added'])
-                if(await db.getSetting('using_by')!=='no body' && ((await db.getBook())[0].name+'' === getUsername(ctx))){
+                if(await noUsed() && ((await db.getBook())[0].name+'' === getUsername(ctx))){
                     ctx.reply(language[(active_lang as string)].command.book.other['get_rest'])
                 }
             }else{
@@ -56,7 +66,7 @@ const commands: Array<Command> = [
     },
     {
         cmd: 'cancel',
-        desc: 'key_holder',
+        desc: 'cancel',
         action:async (ctx: Context, active_lang: string)=>{
             if((await db.cekBook(getUsername(ctx))).length<1){
                 ctx.reply(language[(active_lang as string)].command.cancle.other['never'])
@@ -68,7 +78,7 @@ const commands: Array<Command> = [
     },
     {
         cmd: 'be_key_bearer',
-        desc: 'update_lang',
+        desc: 'be_key_bearer',
         action: async(ctx: Context, active_lang: string)=>{
             await db.setSetting('key_bearer', getUsername(ctx))
             ctx.reply(getUsername(ctx)+language[(active_lang as string)].command.be_key_bearer.other['is'])
@@ -76,7 +86,7 @@ const commands: Array<Command> = [
     },
     {
         cmd: 'key_bearer',
-        desc: 'update_lang',
+        desc: 'key_bearer',
         action:async (ctx: Context, active_lang: string)=>{
             ctx.reply((await db.getSetting('key_bearer'))+language[(active_lang as string)].command.key_bearer.other['is'])
         }
@@ -86,7 +96,7 @@ const commands: Array<Command> = [
         desc: 'checkin',
         action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
-                if(await db.getSetting('using_by')!=='no body'){
+                if(await noUsed()){
                     await db.setSetting('wanna_check', getUsername(ctx))
                     await ctx.telegram.sendMessage({
                         chatId: ctx.chat.id,
@@ -111,7 +121,8 @@ const commands: Array<Command> = [
                             await db.getSetting('using_by')
                         }, ${
                             language[(active_lang as string)].command.checkin.other['you_can_book']
-                        }`)
+                        }`
+                    )
                 }
             }
         }
@@ -120,18 +131,22 @@ const commands: Array<Command> = [
         cmd: key.substr(1),
         desc: 'reminder',
         action: async (ctx: Context, active_lang: string)=>{
-            
-            if((await db.getSetting('wanna_check'))+''==='no body'){
+
+            if((await noWannaCheck())||(await db.getSetting('wanna_check')!==getUsername(ctx))){
                 return ctx.reply(language[(active_lang as string)].command.reminder.other['never_check'])
             }
-            await db.setSetting('wanna_check', 'no body')
+
+            await resetWannaCheck()
+
             if((await db.cekBook(getUsername(ctx))).length<1){
                 ctx.reply(language[(active_lang as string)].command.reminder.other['never'])
             }else{
                 await db.delBook(getUsername(ctx))
                 ctx.reply(language[(active_lang as string)].command.reminder.other['moved'])
             }
+
             await db.setSetting('using_by', getUsername(ctx))
+
             await db.setSetting('start_from', `${language[active_lang].day[new Date().getDay()]} ${new Date().getHours()}.${new Date().getMinutes()} `)
             ctx.reply(language[(active_lang as string)].command.reminder.other['checkin'])
             setTimeout(async() => {
@@ -160,13 +175,13 @@ const commands: Array<Command> = [
         desc: 'checkout',
         action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
-                if(await db.getSetting('using_by')+''!==getUsername(ctx))
+                if((await db.getSetting('using_by')+''!==getUsername(ctx)))
                 {
                     return ctx.reply(language[(active_lang as string)].command.checkout.other['no_use'])
                 }
 
                 await db.setHistory(getUsername(ctx),`( ${await db.getSetting('start_from')}- ${new Date().getHours()}.${new Date().getMinutes()} )`)
-                await db.setSetting('using_by','no body')
+                await resetUsed()
                 await db.setSetting('start_from','not started yet')
                 ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
                 await ctx.telegram.sendMessage({
@@ -190,7 +205,7 @@ const commands: Array<Command> = [
         action:async (ctx: Context, active_lang: string)=>{
             if (ctx.message !== undefined && ctx.chat !== undefined) {
                 await db.setHistory(getUsername(ctx),`( ${await db.getSetting('start_from')}- ${new Date().getHours()}.${new Date().getMinutes()} )`)
-                await db.setSetting('using_by','no body')
+                await resetUsed()
                 await db.setSetting('start_from','not started yet')
                 ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
                 await ctx.telegram.sendMessage({

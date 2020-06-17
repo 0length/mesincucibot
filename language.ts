@@ -11,65 +11,66 @@ interface Language {
 }
 const language: {[index: string]: Language} = {
     id: {
-        intro: "Perkenalkan Saya adalah Mesin Cuci Assistance",
+        intro: "Perkenalkan Saya adalah Mesin Cuci Assistance. /help@mesincucibot untuk melihat command list.",
         command: {
-            history: {
-                title: 'Daftar Riwayat : \n',
+            'history': {
+                title: 'Daftar Riwayat',
                 desc: 'Memperlihatkan daftar riwayat pemakaian mesin cuci selama 12 jam terakhir.',
                 other:{
 
                 }
             },
-            book_list: {
-                title: 'Daftar Pemesanan : \n',
+            'book_list': {
+                title: 'Daftar Pemesanan',
                 desc: 'Memperlihatkan daftar urutan pemesanan.',
                 other:{
 
                 }
             },
-            book: {
+            'book': {
                 title: 'Pemesanan',
-                desc: 'Melakukan pemesanan',
+                desc: 'Melakukan pemesanan.',
                 other: {
                     added: '✔️ di tambahkan',
                     already: 'sudah pernah memesan',
+                    used: 'tidak bisa memesan lagi. karena sedang menggunakan',
                     get_rest: 'Mesin cuci sedang meng🍷 anda bisa /checkin sekarang',
                 }
             },
-            cancle: {
+            'cancel': {
                 title: 'Batal',
-                desc: 'Membatalkan Pesanan',
+                desc: 'Membatalkan Pesanan.',
                 other: {
                     never: 'belum pernah memesan sebelumnya',
                     removed: `Sudah di ❌ dari daftar pesanan`
                 }
             },
-            be_key_bearer: {
-                title: 'Menjadi pembawa 🔑',
-                desc: 'Menjadi pembawa 🔑',
+            'be_key_bearer': {
+                title: 'Menjadi pembawa Kunci',
+                desc: 'Menjadi pembawa 🔑 agar tidak susah mencari.',
                 other: {
                     is: ' adalah pembawa 🔑',
                 }
             },
-            key_bearer: {
-                title: 'Melihat pembawa 🔑',
-                desc: 'Melihat pembawa 🔑',
+            'key_bearer': {
+                title: 'Melihat pembawa Kunci',
+                desc: 'Melihat siapa yang pembawa 🔑.',
                 other: {
-                    is: ' adalah pembawa 🔑',
+                    is: ' adalah pembawa 🔑.',
                 }
             },
-            checkin: {
-                title: '',
-                desc: '',
+            'checkin': {
+                title: 'Mulai',
+                desc: 'Mulai menggunakan mesin cuci.',
                 other: {
                     on_step_again: 'Satu langkah lagi. Pilih ⏰ penggunaan',
                     is_used_by: 'Mesin cuci sedang di pakai oleh',
                     you_can_book: 'anda bisa /book (memesan) untuk menggunakan selanjutnya dan  /book_list (daftar pesanan ) untuk melihat daftar pesanan.',
                 }
             },
-            reminder:{
-                title: '',
-                desc: '',
+            'reminder':{
+                title: 'Waktu Pengingat',
+                desc: 'Hanya dapat dilakukan bila sudah /checkin .',
                 other: {
                     never_check: 'belum pernah checkin sebelumnya, tolong /checkin dulu. ',
                     never: 'belum pernah booking sebelumnya, tapi ndak papa.',
@@ -78,12 +79,22 @@ const language: {[index: string]: Language} = {
                     checkin: '✔️ checkin.'
                 }
             },
-            checkout:{
-                title: '',
-                desc: '',
+            'checkout':{
+                title: 'Selesai',
+                desc: 'Menyelesaikan pengunaan.',
                 other: {
                     get_rest: ' Mesin cuci sudah meng🍷.',
-                    can_use: ' bisa menggunakan sekarang',
+                    can_use: ' bisa /checkin sekarang',
+                    no_use: ' anda memang belum menggunakan',
+                    checkout: '✔️ checkout.'
+                }
+            },
+            'force_checkout':{
+                title: 'Paksa Selesai',
+                desc: 'Menyelesaikan pengunaan secara pakasa (dapat dilakukan siapapun).',
+                other: {
+                    get_rest: ' Mesin cuci sudah meng🍷.',
+                    can_use: ' bisa /checkin sekarang',
                     no_use: ' anda memang belum menggunakan',
                     checkout: '✔️ checkout.'
                 }
@@ -94,30 +105,31 @@ const language: {[index: string]: Language} = {
     en: {
         intro: "i am mesincucibot assistance",
         command: {
-            history: {
+            'history': {
                 title: 'History : \n',
                 desc: 'Showing a list of washing machine usage history for the past 12 hours.',
                 other:{
 
                 }
             },
-            book_list: {
+            'book_list': {
                 title: 'Booking list : \n',
                 desc: 'Showing booking list.',
                 other:{
 
                 }
             },
-            book: {
+            'book': {
                 title: 'Booking',
                 desc: '',
                 other: {
                     added: 'added to book list',
                     already: 'already add to book list',
+                    used: 'tidak bisa memesan lagi. karena sedang menggunakan',
                     get_rest: 'Whasing machine is not in use, you can /checkin now.',
                 }
             },
-            cancle: {
+            'cancle': {
                 title: '',
                 desc: '',
                 other: {
@@ -125,21 +137,21 @@ const language: {[index: string]: Language} = {
                     removed: `removed from book list`
                 }
             },
-            be_key_bearer: {
+            'be_key_bearer': {
                 title: '',
                 desc: '',
                 other: {
                     is: ' is the key bearer now',
                 }
             },
-            key_bearer: {
+            'key_bearer': {
                 title: '',
                 desc: '',
                 other: {
                     is: ' is the key bearer now',
                 }
             },
-            checkin: {
+            'checkin': {
                 title: '',
                 desc: '',
                 other: {
@@ -148,7 +160,7 @@ const language: {[index: string]: Language} = {
                     you_can_book: 'you can /book first to use it next and /book_list to see sequence of your turn.',
                 }
             },
-            reminder:{
+            'reminder':{
                 title: '',
                 desc: '',
                 other: {
@@ -158,7 +170,7 @@ const language: {[index: string]: Language} = {
                     checkin: 'Success checkin.'
                 }
             },
-            checkout:{
+            'checkout':{
                 title: '',
                 desc: '',
                 other: {

@@ -12,7 +12,7 @@ export class Database {
         return [...await this._db.query(q, p)]
     }
 
-    constructor(private readonly _name: string = 'uye.db') {
+    constructor(private readonly _name: string = 'storage/database.db') {
     }
 
     /** Initial Runner */
@@ -69,6 +69,11 @@ export class Database {
     public async delBook(name: string): Promise<any>{
         for (const value of [...await this._query(`DELETE FROM books WHERE name='${name}'`)])
         return value
+    }
+
+    /** Remove Book */
+    public resetHistory(): Promise<any>{
+        return this._query(`DELETE FROM histories`)
     }
 
     private async _migration(): Promise<void>{
