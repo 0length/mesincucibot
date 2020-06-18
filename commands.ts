@@ -98,8 +98,7 @@ const commands: Array<Command> = [
             if (ctx.message !== undefined && ctx.chat !== undefined) {
                 if(await noUsed()){
                     await db.setSetting('wanna_check', getUsername(ctx))
-                    await ctx.telegram.sendMessage({
-                        chatId: ctx.chat.id,
+                    await ctx.telegram.sendMessage(ctx.chat.id, {
                         text: language[(active_lang as string)].command.checkin.other['on_step_again'],
                         params: {
                             parse_mode: 'Markdown',
@@ -151,8 +150,7 @@ const commands: Array<Command> = [
             ctx.reply(language[(active_lang as string)].command.reminder.other['checkin'])
             setTimeout(async() => {
                 if (ctx.message !== undefined && ctx.chat !== undefined) {
-                    await ctx.telegram.sendMessage({
-                        chatId: ctx.chat.id,
+                    await ctx.telegram.sendMessage(ctx.chat.id, {
                         text: getUsername(ctx)+language[(active_lang as string)].command.reminder.other['might_finish'],
                         params: {
                             parse_mode: 'Markdown',
@@ -184,8 +182,7 @@ const commands: Array<Command> = [
                 await resetUsed()
                 await db.setSetting('start_from','not started yet')
                 ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
-                await ctx.telegram.sendMessage({
-                    chatId: ctx.chat.id,
+                await ctx.telegram.sendMessage(ctx.chat.id, {
                     text: language[(active_lang as string)].command.checkout.other['get_rest'],
                     params: {
                         parse_mode: 'Markdown',
@@ -208,8 +205,7 @@ const commands: Array<Command> = [
                 await resetUsed()
                 await db.setSetting('start_from','not started yet')
                 ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
-                await ctx.telegram.sendMessage({
-                    chatId: ctx.chat.id,
+                await ctx.telegram.sendMessage(ctx.chat.id, {
                     text: language[(active_lang as string)].command.checkout.other['get_rest'],
                     params: {
                         parse_mode: 'Markdown',
