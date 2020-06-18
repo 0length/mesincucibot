@@ -1,5 +1,4 @@
-import { DB } from "https://deno.land/x/sqlite/mod.ts"
-import * as log from "https://deno.land/std/log/mod.ts"
+import { DB, log } from "./deps.ts"
 import { initSetting } from './setting.ts'
 /** Sqlite Database */
 export class Database {

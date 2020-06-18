@@ -1,3 +1,4 @@
+import { config } from './deps.ts'
 interface Command {
     title: string
     desc: string
@@ -11,7 +12,7 @@ interface Language {
 }
 const language: {[index: string]: Language} = {
     id: {
-        intro: "Perkenalkan Saya adalah Mesin Cuci Assistance. /help@mesincucibot untuk melihat command list.",
+        intro: "Perkenalkan Saya adalah Mesin Cuci Assistance. /help"+config()['BOT_NAME'].toString()+" untuk melihat command list.",
         command: {
             'history': {
                 title: 'Daftar Riwayat',

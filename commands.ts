@@ -1,4 +1,4 @@
-import { Context } from "https://deno.land/x/telegram/mod.ts"
+import { Context, config } from "./deps.ts"
 import { language } from './language.ts'
 import { Database } from './database.ts'
 const db = new Database()
@@ -69,10 +69,10 @@ const commands: Array<Command> = [
         desc: 'cancel',
         action:async (ctx: Context, active_lang: string)=>{
             if((await db.cekBook(getUsername(ctx))).length<1){
-                ctx.reply(language[(active_lang as string)].command.cancle.other['never'])
+                ctx.reply(language[(active_lang as string)].command.cancel.other['never'])
             }else{
                 await db.delBook(getUsername(ctx))
-                ctx.reply(language[(active_lang as string)].command.cancle.other['removed'])
+                ctx.reply(language[(active_lang as string)].command.cancel.other['removed'])
             }
         }
     },
@@ -105,7 +105,7 @@ const commands: Array<Command> = [
                             parse_mode: 'Markdown',
                             reply_to_message_id: ctx.message.message_id,
                             reply_markup: {
-                                keyboard: [ ...Object.keys(timeRiminder).map((text: string)=>([{text}]))],
+                                keyboard: [ ...Object.keys(timeRiminder).map((text: string)=>([{text: text+config()['BOT_NAME'].toString()}]))],
                                 one_time_keyboard: true,
                                 resize_keyboard: true,
                                 remove_keyboard: true,
@@ -132,7 +132,7 @@ const commands: Array<Command> = [
         desc: 'reminder',
         action: async (ctx: Context, active_lang: string)=>{
 
-            if((await noWannaCheck())||(await db.getSetting('wanna_check')!==getUsername(ctx))){
+            if((await noWannaCheck())||(await db.getSetting('wanna_check')+''!==getUsername(ctx))){
                 return ctx.reply(language[(active_lang as string)].command.reminder.other['never_check'])
             }
 
@@ -147,7 +147,7 @@ const commands: Array<Command> = [
 
             await db.setSetting('using_by', getUsername(ctx))
 
-            await db.setSetting('start_from', `${language[active_lang].day[new Date().getDay()]} ${new Date().getHours()}.${new Date().getMinutes()} `)
+            await db.setSetting('start_from', `${language[active_lang].day[new Date().getDay()]} ${new Date().getHours()}.${new Date().getMinutes()<10?'0'+new Date().getMinutes():new Date().getMinutes()} `)
             ctx.reply(language[(active_lang as string)].command.reminder.other['checkin'])
             setTimeout(async() => {
                 if (ctx.message !== undefined && ctx.chat !== undefined) {
