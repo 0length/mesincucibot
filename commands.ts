@@ -99,7 +99,7 @@ const commands: Array<Command> = [
                 if(await noUsed()){
                     await db.setSetting('wanna_check', getUsername(ctx))
                     await ctx.telegram.sendMessage(ctx.chat.id, {
-                        chat_id: ctx.chat.id,
+                        // chat_id: ctx.chat.id,
                         text: language[(active_lang as string)].command.checkin.other['on_step_again'],
                         parse_mode: 'Markdown',
                         reply_to_message_id: ctx.message.message_id,
@@ -151,7 +151,7 @@ const commands: Array<Command> = [
                 if (ctx.message !== undefined && ctx.chat !== undefined) {
                     await ctx.telegram.sendMessage(ctx.chat.id, {
                         text: getUsername(ctx)+language[(active_lang as string)].command.reminder.other['might_finish'],
-                        chat_id: ctx.chat.id,
+                        // chat_id: ctx.chat.id,
                         parse_mode: 'Markdown',
                         reply_to_message_id: ctx.message.message_id,
                         reply_markup: {
@@ -182,7 +182,7 @@ const commands: Array<Command> = [
                 ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
                 await ctx.telegram.sendMessage(ctx.chat.id, {
                     text: language[(active_lang as string)].command.checkout.other['get_rest'],
-                    chat_id: ctx.chat.id,
+                    // chat_id: ctx.chat.id,
                     parse_mode: 'Markdown',
                     reply_to_message_id: ctx.message.message_id,
                 })
@@ -204,7 +204,7 @@ const commands: Array<Command> = [
                 ctx.reply(language[(active_lang as string)].command.checkout.other['checkout'])
                 await ctx.telegram.sendMessage(ctx.chat.id, {
                     text: language[(active_lang as string)].command.checkout.other['get_rest'],
-                    chat_id: ctx.chat.id,
+                    // chat_id: ctx.chat.id,
                     parse_mode: 'Markdown',
                     reply_to_message_id: ctx.message.message_id,
                 })
